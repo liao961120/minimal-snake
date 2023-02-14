@@ -1,0 +1,4 @@
+# /made/*
+.snakemake
+PASSWORD
+__pycache__
