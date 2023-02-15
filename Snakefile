@@ -1,5 +1,4 @@
 import os
-from pathlib import Path
 from src.snakes import glob_stem
 
 # Additional setup for running with git-bash on Windows
@@ -52,15 +51,15 @@ rule get_stopwords:
         "made/stopwords.txt"
     shell: "Rscript {input.script} {output}"
 
+
 ########################################
 """
-Tips:
-    1. DO NOT use Snakmake built-in wildcards
-        lots of limitations & changes the default behaviour in for loops
-        of run: blocks
-"""
+[Tips]
+    DO NOT use Snakmake built-in wildcards
+    lots of limitations & changes the default behaviour in for loops
+    of run: blocks
 
-"""How relative paths work in Snakefile
+[How relative paths work in Snakefile]
 
 `input:`, `output:`, and `shell:` have the project root as the working dir.
 All other directives (e.g. `script:`, `include:`, and `notebook:`) have 
