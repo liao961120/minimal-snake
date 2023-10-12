@@ -1,10 +1,25 @@
 import os
+from pathlib import Path
+from shlex import join  # for quoting file paths
 from src.snakes import glob_stem
+
 
 # Additional setup for running with git-bash on Windows
 if os.name == 'nt':
     from snakemake.shell import shell
     shell.executable(r'C:\Users\rd\AppData\Local\Programs\Git\bin\bash.exe')
+    shell.prefix("""
+    # Load bash predefined functions
+    lastwd=$(pwd)
+    source ~/.bash_profile
+    cd "$lastwd"
+""")
+
+# Protect Raw data (read-only permissions for all files in `raw/`)
+from stat import S_IREAD, S_IRGRP, S_IROTH
+for fp in Path("raw").rglob("*"):
+    if fp.is_file():
+        os.chmod(fp, S_IREAD|S_IRGRP|S_IROTH)
 
 
 # Global variables
@@ -50,6 +65,29 @@ rule get_stopwords:
     output:
         "made/stopwords.txt"
     shell: "Rscript {input.script} {output}"
+
+
+rule get_stopwords_nonStdFilePaths:
+    """
+    This rule demonstrates the use of `shlex.join()` along with the `params` 
+    directive to handle cmd arguments with nonstandard file paths (e.g., paths
+    with spaces and parentheses).
+    """
+    input: 
+        script = "src/stopwords-multi-output.R"
+    output:
+        multi = [
+            "made/stopwords-1.txt",
+            "made/stopwords-2.txt",
+            "made/stopwords-3.txt",
+        ]
+    params:
+        # See https://snakemake.readthedocs.io/en/stable/snakefiles/rules.html#non-file-parameters-for-rules
+        outfiles = lambda wildcards, output: join(output.multi)
+    shell: 
+        """
+        Rscript {input.script} {params.outfiles}
+        """
 
 
 ########################################
