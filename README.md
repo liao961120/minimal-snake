@@ -48,7 +48,7 @@ To Do
 A simple command line program to take a snakemake's `--detailed-summary` table and generate a dot file of file dependency DAG. This may look like something as:
 
 ```bash
-snakemake --detailed-summary -c | fileDag | dot -Tpng -Gdpi=300 -Grankdir=LR > dag.png
+snakemake --detailed-summary -c | fileDag | dot -Tsvg -Grankdir=LR > dag.svg
 ```
 
 ```bash
